@@ -6,7 +6,7 @@ from utils import *
 from reconstruction_model import *
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
-from Object_Mask import *
+from ObjectMask import *
 import copy
 import os
 import glob
@@ -24,7 +24,6 @@ def setup_seed(seed):
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-
 @contextmanager
 def suppress_output():
     original_stdout = sys.stdout
@@ -53,6 +52,12 @@ def train_test(args):
         train_folder = os.path.join('Avenue', 'Train')
         test_folder = os.path.join('Avenue', 'Test')
         learning_rate = args.learning_rate_avenue
+    if args.dataset_type == 'shanghai':
+        channel_in = 3
+        learning_rate = 1e-4
+        train_folder = os.path.join('shanghaitech', 'training', 'frames')
+        test_folder = os.path.join('shanghaitech', 'testing', 'frames')
+        args.epochs = 10
     img_extension = '.tif' if args.dataset_type == 'ped2' else '.jpg'
     exp_dir = args.exp_dir + '_lr' + str(learning_rate) + '_bs' + str(args.batch_size)
     log_dir = os.path.join('./', args.path + str(args.path_num), args.dataset_type, exp_dir)
@@ -210,6 +215,7 @@ def train_test(args):
 
                 assert len(modified_loss_mse) == loss_mse.size(0)
                 stacked_loss_mse = torch.stack(modified_loss_mse)
+
                 if kl_label:
                     loss = torch.mean(stacked_loss_mse)\
                            + (loss_feas.sum()) * 0.0002 \
@@ -329,7 +335,7 @@ def write2txt(filename, content):
 parser = argparse.ArgumentParser(description="VAD")
 parser.add_argument('--batch_size', type=int, default=2, help='batch size for training')
 parser.add_argument('--test_batch_size', type=int, default=1, help='batch size for test')
-parser.add_argument('--epochs', type=int, default=50, help='number of epochs for training')
+parser.add_argument('--epochs', type=int, default=30, help='number of epochs for training')
 parser.add_argument('--h', type=int, default=256, help='height of input images')
 parser.add_argument('--w', type=int, default=256, help='width of input images')
 parser.add_argument('--learning_rate_ped2', type=float, default=0.0001, help='initial learning rate')
@@ -338,7 +344,7 @@ parser.add_argument('--num_workers', type=int, default=0, help='number of worker
 parser.add_argument('--num_workers_test', type=int, default=0, help='number of workers for the test loader')
 parser.add_argument('--loss_m_weight', help='loss_m_weight', type=float, default=0.0002)
 
-parser.add_argument('--dataset_type', type=str, default='ped2', choices=['ped2', 'avenue'],
+parser.add_argument('--dataset_type', type=str, default='ped2', choices=['ped2', 'avenue', 'shanghai'],
                     help='type of dataset: ped2, avenue, shanghai')
 parser.add_argument('--path', type=str, default='exp_log', help='directory of data')
 parser.add_argument('--path_num', type=int, default=11, help='number of path')
