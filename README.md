@@ -1,6 +1,6 @@
-# Video Anomaly Detection Based on Dual-Path Reconstruction and Multi-Source Pseudo-Anomaly Augmentation
+# Enhancing Video Anomaly Detection through Dual-Path Reconstruction and Diverse Pseudo-Anomaly Generation
 
-Official PyTorch implementation of the paper "Video Anomaly Detection Based on Dual-Path Reconstruction and Multi-Source Pseudo-Anomaly Augmentation".
+Official PyTorch implementation of the manuscript **"Enhancing Video Anomaly Detection through Dual-Path Reconstruction and Diverse Pseudo-Anomaly Generation"**, submitted to **The Visual Computer**. Please cite our paper if you use this code.
 
 ## Overview
 
